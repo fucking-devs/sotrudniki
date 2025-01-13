@@ -1,0 +1,24 @@
+{
+  "name": "sotrudniki",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start:dev": "nodemon src/app.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv-cli": "^8.0.0",
+    "express": "^4.21.2",
+    "mongoose": "^8.9.4",
+    "puppeteer": "^24.0.0",
+    "typescript": "^5.7.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.5",
+    "ts-node": "^10.9.2"
+  }
+}
