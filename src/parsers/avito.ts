@@ -1,20 +1,31 @@
 import { Page } from 'puppeteer'
+import { parse } from 'node-html-parser'
+
+interface Element extends HTMLDivElement {
+  querySelector(selector: string): { innerText: string }
+}
 
 export const parseAvitoPage = async (page: Page) => {
   const employees: {
-    title: string,
-    desc: string,
-    salary: number
+    title?: string,
+    desc?: string,
+    salary?: string
   }[] = []
 
-  // const cards = await page.$$eval('.iva-item-root-Se7z4.photo-slider-slider-ZccM3.iva-item-list-CLaiS.iva-item-redesign-H4ow9.iva-item-responsive-GCo6h.items-item-Reit3.items-listItem-rKPls.js-catalog-item-enum', async (els) => els.map((el: any) => el.innerText))
-  // console.log(cards)
-  return await page.evaluate(() => {
-    const data = document.querySelector('a')
-    // 'iva-item-root-Se7z4.photo-slider-slider-ZccM3.iva-item-list-CLaiS.iva-item-redesign-H4ow9.iva-item-responsive-GCo6h.items-item-Reit3.items-listItem-rKPls.js-catalog-item-enum'
-
-    console.log(data)
-
-    // return cards
+  const cards = await page.evaluate(() => {
+    return [...document.querySelectorAll('div.iva-item-root-Se7z4')].map((el) => el.innerHTML)
   })
+
+  for (let i = 0; i < cards.length; i++) {
+    const card = parse(cards[i]) 
+
+    employees.push({
+      // TODO: добавить поле href, которое сохраняет ссылку на резюме
+      title: card.querySelector('.styles-module-root-s3nJ7')?.innerText,
+      desc: card.querySelector('.styles-module-root-s4tZ2.styles-module-size_s-nEvE8.styles-module-size_s_compensated-wyNaE')?.innerText,
+      salary: card.querySelector('.styles-module-root-LEIrw')?.innerText
+    })
+  }
+
+  return employees
 }
