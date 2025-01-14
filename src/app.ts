@@ -2,6 +2,7 @@
 
 import { Parser } from "./libs/pptr"
 import { parseAvitoPage } from "./parsers/avito"
+import { parseAvitoTitle } from "./parsers/AvitoTitle"
 
 // const app = express()
 
@@ -24,7 +25,11 @@ async function main() {
 
     const avitoData = await parseAvitoPage(page)
 
+    const avitoTitle = await parseAvitoTitle(page)
+
     console.log(avitoData)
+
+    console.log('Заголовок:', avitoTitle);
 
     await parser.close()
 }

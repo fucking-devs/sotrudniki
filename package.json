@@ -12,13 +12,13 @@
   "dependencies": {
     "dotenv-cli": "^8.0.0",
     "express": "^4.21.2",
-    "mongoose": "^8.9.4",
+    "mongoose": "^8.9.5",
     "puppeteer": "^24.0.0",
     "typescript": "^5.7.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
-    "@types/node": "^22.10.5",
+    "@types/node": "^22.10.6",
     "ts-node": "^10.9.2"
   }
 }
