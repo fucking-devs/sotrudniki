@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@types/puppeteer':
+        specifier: ^7.0.4
+        version: 7.0.4(typescript@5.7.3)
       dotenv-cli:
         specifier: ^8.0.0
         version: 8.0.0
@@ -104,6 +107,10 @@ packages:
 
   '@types/node@22.10.5':
     resolution: {integrity: sha512-F8Q+SeGimwOo86fiovQh8qiXfFEh2/ocYv7tU5pJ3EXMSSxk1Joj5wefpFK2fHTf/N6HKGSxIDBT9f3gCxXPkQ==}
+
+  '@types/puppeteer@7.0.4':
+    resolution: {integrity: sha512-ja78vquZc8y+GM2al07GZqWDKQskQXygCDiu0e3uO0DMRKqE0MjrFBFmTulfPYzLB6WnL7Kl2tFPy0WXSpPomg==}
+    deprecated: This is a stub types definition. puppeteer provides its own type definitions, so you do not need this installed.
 
   '@types/qs@6.9.17':
     resolution: {integrity: sha512-rX4/bPcfmvxHDv0XjfJELTTr+iB+tn032nPILqHm5wbthUUUuVtNGGqzhya9XUxjTP8Fpr0qYgSZZKxGY++svQ==}
@@ -1046,6 +1053,15 @@ snapshots:
   '@types/node@22.10.5':
     dependencies:
       undici-types: 6.20.0
+
+  '@types/puppeteer@7.0.4(typescript@5.7.3)':
+    dependencies:
+      puppeteer: 24.0.0(typescript@5.7.3)
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - typescript
+      - utf-8-validate
 
   '@types/qs@6.9.17': {}
 
