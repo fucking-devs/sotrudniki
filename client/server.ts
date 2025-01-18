@@ -23,6 +23,8 @@ app.get('/', (req: Request, res: Response) => {
 app.post('/submit', async (req: Request, res: Response): Promise<void> => {
     const formData = req.body;
 
+    console.log('Полученные данные:', formData);
+
     if (!formData.query) {
         res.status(400).json({ error: 'Параметр query обязателен.' });
         return;
@@ -39,6 +41,8 @@ app.post('/submit', async (req: Request, res: Response): Promise<void> => {
         
         existingData.push(formData);
         fs.writeFileSync(filePath, JSON.stringify(existingData, null, 2));
+
+        console.log('Данные успешно сохранены:', formData);
 
         res.json({ message: 'Данные успешно сохранены', data: formData });
     } catch (error) {

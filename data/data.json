@@ -9,5 +9,27 @@
     "citizenship": "belarus",
     "custom-citizenship": "",
     "query": "Король Жуков"
+  },
+  {
+    "age": "21",
+    "experience": "21",
+    "criminal": "yes",
+    "position": "sas",
+    "city": "moscow",
+    "custom-city": "",
+    "citizenship": "belarus",
+    "custom-citizenship": "",
+    "query": "stick"
+  },
+  {
+    "age": "543",
+    "experience": "32",
+    "criminal": "no",
+    "position": "fsd",
+    "city": "volgograd",
+    "custom-city": "",
+    "citizenship": "kazakhstan",
+    "custom-citizenship": "",
+    "query": "Wand"
   }
 ]

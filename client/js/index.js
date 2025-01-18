@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const form = document.getElementById('application-form');
     form.addEventListener('submit', async (event) => {
-        event.preventDefault(); // Предотвращаем стандартное поведение формы
+        event.preventDefault();
 
         const formData = new FormData(form);
         const data = Object.fromEntries(formData.entries());
