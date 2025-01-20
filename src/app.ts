@@ -1,44 +1,8 @@
 import { Parser } from "./libs/pptr";
-import mongoose, { Document, Schema } from 'mongoose';
+import { parse } from "node-html-parser";
 import { parseAvitoPage } from "./parsers/avito";
 
-const mongoUrl = 'mongodb://localhost:27017/AvitoParsers';
-
-interface IEmployee extends Document {
-  title: string;
-  desc?: string;
-  salary?: string;
-  href: string;
-}
-
-const EmployeeSchema: Schema = new Schema({
-  title: { type: String, required: true },
-  desc: { type: String, required: false },
-  salary: { type: String, required: true },
-  href: { type: String, required: true },
-});
-
-const Employee = mongoose.model<IEmployee>('Employee', EmployeeSchema);
-
-async function connectDB() {
-  try {
-    await mongoose.connect(mongoUrl, {
-    });
-    console.log('MongoDB подключен');
-  } catch (error) {
-    console.error('Ошибка подключения к MongoDB:', error);
-    process.exit(1);
-  }
-}
-
-function cleanSalary(salary: string | undefined): string {
-  if (!salary) return 'Зарплата не указана';
-  return salary.replace(/&nbsp;/g, ' ').replace(/₽/g, '').trim();
-}
-
 async function main() {
-  await connectDB();
-
   const parser = new Parser();
   await parser.launch();
   const page = await parser.newPage();
@@ -52,23 +16,7 @@ async function main() {
     await page.goto(link, { timeout: 50_000 });
 
     const avitoData = await parseAvitoPage(page);
-    
-    const cleanedData = avitoData.map(employeeData => ({
-      ...employeeData,
-      salary: cleanSalary(employeeData.salary),
-    }));
-
-    allEmployees.push(...cleanedData);
-
-    for (const employeeData of cleanedData) {
-      const employee = new Employee(employeeData);
-      try {
-        await employee.save();
-        console.log(`Сохранено: ${employeeData.title}`);
-      } catch (error) {
-        console.error('Ошибка при сохранении сотрудника:', error);
-      }
-    }
+    allEmployees.push(...avitoData);
 
     const nextPageElement = await page.$("a.styles-module-item_last-ucP91");
     if (!nextPageElement) {
@@ -81,7 +29,6 @@ async function main() {
 
   console.log(allEmployees);
   await parser.close();
-  await mongoose.connection.close();
 }
 
-main().catch(console.error);
+main();

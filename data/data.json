@@ -31,16 +31,5 @@
     "citizenship": "kazakhstan",
     "custom-citizenship": "",
     "query": "Wand"
-  },
-  {
-    "age": "324",
-    "experience": "35",
-    "criminal": "yes",
-    "position": "sas",
-    "city": "volgograd",
-    "custom-city": "",
-    "citizenship": "belarus",
-    "custom-citizenship": "",
-    "query": "stick"
   }
 ]
