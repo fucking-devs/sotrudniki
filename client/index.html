@@ -9,21 +9,20 @@
 </head>
 <body>
     <header>
+        <h1>Анкета для устройства на стройку</h1>
     </header>
     
     <main>
         <section class="form-container">
-            <form id="application-form" action="/submit" method="POST"> <!-- Изменено на относительный путь -->
+            <form id="application-form" action="/submit" method="POST">
                 <div class="form-group">
                     <label for="age">Возраст:</label>
-                    <input type="number" id="age" name="age" required>
+                    <input type="number" id="age" name="age" required min="0">
                 </div>
-
                 <div class="form-group">
                     <label for="experience">Опыт работы (лет):</label>
                     <input type="number" id="experience" name="experience" required min="0">
                 </div>
-
                 <div class="form-group">
                     <label for="criminal">Судимость?</label>
                     <select id="criminal" name="criminal" required>
@@ -32,12 +31,10 @@
                         <option value="no">Неважно</option>
                     </select>
                 </div>
-
                 <div class="form-group">
-                    <label for="position"> Должность?</label>
+                    <label for="position">Должность:</label>
                     <input type="text" id="position" name="position" required>
                 </div>
-
                 <div class="form-group">
                     <label for="city">Город:</label>
                     <select id="city" name="city" required onchange="toggleCustomCityInput()">
@@ -51,7 +48,6 @@
                     </select>
                     <input type="text" id="custom-city" name="custom-city" placeholder="Введите ваш город" style="display:none;">
                 </div>
-
                 <div class="form-group">
                     <label for="citizenship">Гражданство:</label>
                     <select id="citizenship" name="citizenship" required onchange="toggleCustomCitizenshipInput()">
@@ -64,20 +60,26 @@
                     </select>
                     <input type="text" id="custom-citizenship" name="custom-citizenship" placeholder="Введите ваше гражданство" style="display:none;">
                 </div>
-
                 <div class="form-group">
-                    <label for="prompt">Промт:</label>
-                    <input type="text" id="prompt" name="query"> <!-- Изменено имя на 'query' -->
+                    <label for="query">Промт:</label>
+                    <input type="text" id="query" name="query" required>
                 </div>
 
+                <!-- Кнопка отправки -->
                 <button type="submit">Отправить анкету</button>
+
+                <!-- Сообщение о результате -->
+                <div id="response-message" style="display:none;"></div>
+
             </form>
         </section>
     </main>
 
+    <!-- Подвал страницы -->
     <footer>
         <p>&copy; 2025 Стройка. Все права защищены.</p>
     </footer>
 
 </body>
 </html>
+

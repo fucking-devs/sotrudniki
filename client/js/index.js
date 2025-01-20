@@ -1,53 +1,71 @@
+import axios from "axios"; 
 
 document.addEventListener('DOMContentLoaded', () => {
     const citySelect = document.getElementById('city');
     const customCityInput = document.getElementById('custom-city');
     const citizenshipSelect = document.getElementById('citizenship');
     const customCitizenshipInput = document.getElementById('custom-citizenship');
+    const form = document.getElementById('application-form');
+    const responseMessage = document.getElementById('response-message');
 
-    citySelect.addEventListener('change', function() {
-        if (this.value === 'other') {
-            customCityInput.style.display = 'block';
-            customCityInput.required = true;
-        } else {
-            customCityInput.style.display = 'none';
-            customCityInput.required = false;
-        }
-    });
+    citySelect.addEventListener('change', () => toggleCustomInput(customCityInput, citySelect));
+    citizenshipSelect.addEventListener('change', () => toggleCustomInput(customCitizenshipInput, citizenshipSelect));
+    
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault(); 
 
-    citizenshipSelect.addEventListener('change', function() {
-        if (this.value === 'other') {
-            customCitizenshipInput.style.display = 'block';
-            customCitizenshipInput.required = true;
-        } else {
-            customCitizenshipInput.style.display = 'none';
-            customCitizenshipInput.required = false;
+        // Собираем данные из формы
+        const formData = {
+            age: Number(document.getElementById('age').value), // Приводим к числу
+            experience: Number(document.getElementById('experience').value), // Приводим к числу
+            criminal: document.getElementById('criminal').value,
+            position: document.getElementById('position').value,
+            city: citySelect.value === 'other' ? customCityInput.value : citySelect.value,
+            citizenship: citizenshipSelect.value === 'other' ? customCitizenshipInput.value : citizenshipSelect.value,
+            query: document.getElementById('query').value
+        };
+
+        // Проверка на заполненность всех полей
+        if (!Object.values(formData).every(value => value)) {
+            displayResponseMessage('Все поля обязательны для заполнения.', 'error');
+            return;
         }
+
+        console.log("Отправляемые данные:", formData); // Логирование данных перед отправкой
+
+        await submitForm(formData);
     });
 });
 
-import axios from 'axios';
+function toggleCustomInput(inputElement, selectElement) {
+    if (selectElement.value === 'other') {
+        inputElement.style.display = 'block';
+        inputElement.required = true;
+    } else {
+        inputElement.style.display = 'none';
+        inputElement.required = false;
+    }
+}
 
 async function submitForm(data) {
+    const responseMessage = document.getElementById('response-message'); 
+
     try {
         const response = await axios.post('http://localhost:5000/submit', data, {
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-        console.log(response.data); 
+        displayResponseMessage(response.data.message, 'success');
     } catch (error) {
         console.error('Ошибка при отправке формы:', error);
+        displayResponseMessage(error.response?.data?.error || 'Произошла ошибка при отправке данных.', 'error');
     }
 }
 
-const formData = {
-    age: 30,
-    experience: 5,
-    position: 'Разработчик',
-    city: 'Волгоград',
-    citizenship: 'Россия',
-    query: 'Ищу работу'
-};
-
-submitForm(formData);
+function displayResponseMessage(message, type) {
+    const responseMessage = document.getElementById('response-message'); 
+    responseMessage.textContent = message;
+    responseMessage.style.color = type === 'success' ? 'green' : 'red';
+    responseMessage.style.display = 'block';
+}
