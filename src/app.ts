@@ -14,11 +14,6 @@ app.post('/submit', async (req: Request, res: Response): Promise<void> => {
     const formData = req.body; 
     console.log('Полученные данные:', formData); 
 
-    if (!formData.query || !formData.age || !formData.experience || !formData.position || !formData.city || !formData.citizenship) {
-        res.status(400).json({ error: 'Все поля обязательны.' });
-        return;  
-    }
-
     if (isNaN(formData.age) || isNaN(formData.experience)) {
         res.status(400).json({ error: 'Возраст и опыт работы должны быть числами.' });
         return;

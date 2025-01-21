@@ -14,10 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (event) => {
         event.preventDefault(); 
 
-        // Собираем данные из формы
         const formData = {
-            age: Number(document.getElementById('age').value), // Приводим к числу
-            experience: Number(document.getElementById('experience').value), // Приводим к числу
+            age: Number(document.getElementById('age').value), 
+            experience: Number(document.getElementById('experience').value),
             criminal: document.getElementById('criminal').value,
             position: document.getElementById('position').value,
             city: citySelect.value === 'other' ? customCityInput.value : citySelect.value,
@@ -25,13 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
             query: document.getElementById('query').value
         };
 
-        // Проверка на заполненность всех полей
-        if (!Object.values(formData).every(value => value)) {
-            displayResponseMessage('Все поля обязательны для заполнения.', 'error');
-            return;
-        }
-
-        console.log("Отправляемые данные:", formData); // Логирование данных перед отправкой
+        console.log("Отправляемые данные:", formData); 
 
         await submitForm(formData);
     });
@@ -59,7 +52,12 @@ async function submitForm(data) {
         displayResponseMessage(response.data.message, 'success');
     } catch (error) {
         console.error('Ошибка при отправке формы:', error);
-        displayResponseMessage(error.response?.data?.error || 'Произошла ошибка при отправке данных.', 'error');
+
+        if (error.response && error.response.data && error.response.data.error) {
+            displayResponseMessage(error.response.data.error, 'error');
+        } else {
+            displayResponseMessage('Произошла ошибка при отправке данных.', 'error');
+        }
     }
 }
 

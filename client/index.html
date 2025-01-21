@@ -3,83 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Анкета для устройства на стройку</title>
+    <title>Поиск сотрудников</title>
     <link href="css/index.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/index.scss">
     <script type="module" src="js/index.js" defer></script>
 </head>
 <body>
     <header>
-        <h1>Анкета для устройства на стройку</h1>
+        <h1 class="main-header">Поиск сотрудников</h1>
+        <p class="sub-header">Заполните анкету для поиска подходящих кандидатов</p>
     </header>
-    
-    <main>
-        <section class="form-container">
-            <form id="application-form" action="/submit" method="POST">
-                <div class="form-group">
-                    <label for="age">Возраст:</label>
-                    <input type="number" id="age" name="age" required min="0">
-                </div>
-                <div class="form-group">
-                    <label for="experience">Опыт работы (лет):</label>
-                    <input type="number" id="experience" name="experience" required min="0">
-                </div>
-                <div class="form-group">
-                    <label for="criminal">Судимость?</label>
-                    <select id="criminal" name="criminal" required>
-                        <option value="">Выберите...</option>
-                        <option value="yes">Отсутствует</option>
-                        <option value="no">Неважно</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="position">Должность:</label>
-                    <input type="text" id="position" name="position" required>
-                </div>
-                <div class="form-group">
-                    <label for="city">Город:</label>
-                    <select id="city" name="city" required onchange="toggleCustomCityInput()">
-                        <option value="">Выберите город...</option>
-                        <option value="volgograd">Волгоград</option>
-                        <option value="moscow">Москва</option>
-                        <option value="samara">Самара</option>
-                        <option value="kazan">Казань</option>
-                        <option value="ekaterinburg">Екатеринбург</option>
-                        <option value="other">Другой</option>
-                    </select>
-                    <input type="text" id="custom-city" name="custom-city" placeholder="Введите ваш город" style="display:none;">
-                </div>
-                <div class="form-group">
-                    <label for="citizenship">Гражданство:</label>
-                    <select id="citizenship" name="citizenship" required onchange="toggleCustomCitizenshipInput()">
-                        <option value="">Выберите гражданство...</option>
-                        <option value="russia">Россия</option>
-                        <option value="belarus">Беларусь</option>
-                        <option value="kazakhstan">Казахстан</option>
-                        <option value="ukraine">Украина</option>
-                        <option value="other">Другое</option>
-                    </select>
-                    <input type="text" id="custom-citizenship" name="custom-citizenship" placeholder="Введите ваше гражданство" style="display:none;">
-                </div>
-                <div class="form-group">
-                    <label for="query">Промт:</label>
-                    <input type="text" id="query" name="query" required>
-                </div>
 
-                <!-- Кнопка отправки -->
-                <button type="submit">Отправить анкету</button>
+    <section class="form-container">
+        <form id="application-form" action="/submit" method="POST">
+            <div class="form-group">
+                <label for="age">Возраст:</label>
+                <input type="number" id="age" name="age" min="0">
+            </div>
+            <div class="form-group">
+                <label for="experience">Опыт работы (лет):</label>
+                <input type="number" id="experience" name="experience" min="0">
+            </div>
+            <div class="form-group">
+                <label for="criminal">Судимость?</label>
+                <select id="criminal" name="criminal">
+                    <option value="">Выберите...</option>
+                    <option value="yes">Отсутствует</option>
+                    <option value="no">Неважно</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="position">Должность:</label>
+                <input type="text" id="position" name="position">
+            </div>
+            <div class="form-group">
+                <label for="city">Город:</label>
+                <select id="city" name="city" onchange="toggleCustomCityInput()">
+                    <option value="">Выберите город...</option>
+                    <option value="volgograd">Волгоград</option>
+                    <option value="moscow">Москва</option>
+                    <option value="samara">Самара</option>
+                    <option value="kazan">Казань</option>
+                    <option value="ekaterinburg">Екатеринбург</option>
+                    <option value="other">Другой</option>
+                </select>
+                <input type="text" id="custom-city" name="custom-city" placeholder="Введите ваш город" style="display:none;">
+            </div>
+            <div class="form-group">
+                <label for="citizenship">Гражданство:</label>
+                <select id="citizenship" name="citizenship" onchange="toggleCustomCitizenshipInput()">
+                    <option value="">Выберите гражданство...</option>
+                    <option value="russia">Россия</option>
+                    <option value="belarus">Беларусь</option>
+                    <option value="kazakhstan">Казахстан</option>
+                    <option value="ukraine">Украина</option>
+                    <option value="other">Другое</option>
+                </select>
+                <input type="text" id="custom-citizenship" name="custom-citizenship" placeholder="Введите ваше гражданство" style="display:none;">
+            </div>
+            <div class="form-group">
+                <label for="query">Промт:</label>
+                <textarea id="query" name="query" rows="4" placeholder="Введите ваш запрос"></textarea>
+            </div>
+            <button type="submit">Отправить анкету</button>
+            <div id="response-message" style="display:none;"></div>
 
-                <!-- Сообщение о результате -->
-                <div id="response-message" style="display:none;"></div>
-
-            </form>
-        </section>
-    </main>
-
-    <!-- Подвал страницы -->
-    <footer>
-        <p>&copy; 2025 Стройка. Все права защищены.</p>
-    </footer>
+        </form>
+    </section>
 
 </body>
 </html>
-

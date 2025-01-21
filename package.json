@@ -14,7 +14,8 @@
     "dotenv-cli": "^8.0.0",
     "mongoose": "^8.9.5",
     "node-html-parser": "^7.0.1",
-    "puppeteer": "^24.1.0"
+    "puppeteer": "^24.1.0",
+    "sass": "^1.83.4"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.5",
