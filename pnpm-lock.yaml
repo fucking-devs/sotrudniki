@@ -8,15 +8,27 @@ importers:
 
   .:
     dependencies:
+      '@types/body-parser':
+        specifier: ^1.19.5
+        version: 1.19.5
+      '@types/express':
+        specifier: ^5.0.0
+        version: 5.0.0
       '@types/mongoose':
         specifier: ^5.11.97
         version: 5.11.97(socks@2.8.3)
+      '@types/node':
+        specifier: ^22.10.5
+        version: 22.10.5
       '@types/puppeteer':
         specifier: ^7.0.4
         version: 7.0.4(typescript@5.7.3)
       body-parser:
         specifier: ^1.20.3
         version: 1.20.3
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.4.7
       dotenv-cli:
         specifier: ^8.0.0
         version: 8.0.0
@@ -32,22 +44,12 @@ importers:
       puppeteer:
         specifier: ^24.0.0
         version: 24.0.0(typescript@5.7.3)
-      typescript:
-        specifier: ^5.7.3
-        version: 5.7.3
-    devDependencies:
-      '@types/body-parser':
-        specifier: ^1.19.5
-        version: 1.19.5
-      '@types/express':
-        specifier: ^5.0.0
-        version: 5.0.0
-      '@types/node':
-        specifier: ^22.10.5
-        version: 22.10.5
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@types/node@22.10.5)(typescript@5.7.3)
+      typescript:
+        specifier: ^5.7.3
+        version: 5.7.3
 
 packages:
 

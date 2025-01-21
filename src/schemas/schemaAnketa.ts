@@ -32,5 +32,7 @@ const SubmissionSchema: Schema = new Schema({
   additionalData: { type: Object, default: {} },
 });
 
-const Submission = mongoose.model<ISubmission>('Submission', SubmissionSchema);
+
+const Submission = mongoose.models.Submission || mongoose.model<ISubmission>('Submission', SubmissionSchema);
+
 export default Submission;
