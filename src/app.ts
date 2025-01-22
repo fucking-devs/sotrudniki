@@ -83,37 +83,18 @@ async function fetchAvitoData() {
       }
     }
 
-            const nextPageElement = await page.$("a.styles-module-item_last-ucP91");
-            if (!nextPageElement) {
-                break;
-            }
-
-            currentPage++;
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-        }
-
-     
-        const dirPath = path.join(__dirname, '../data');
-        if (!fs.existsSync(dirPath)) {
-            fs.mkdirSync(dirPath);
-        }
-
-        const filePath = path.join(dirPath, 'data.json');
-        const existingData = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath, 'utf8')) : [];
-        
-        existingData.push(...allEmployees);
-        fs.writeFileSync(filePath, JSON.stringify(existingData, null, 2));
-
-        console.log('Данные успешно сохранены:', allEmployees);
-
-        res.json({ message: 'Данные успешно получены и сохранены', data: allEmployees });
-    } catch (error) {
-        console.error('Ошибка при обработке запроса:', error);
-        res.status(500).json({ error: 'Внутренняя ошибка сервера' });
-    } finally {
-        await parser.close();
+    const nextPageElement = await page.$("a.styles-module-item_last-ucP91");
+    if (!nextPageElement) {
+      break;
     }
-});
+
+    currentPage++;
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  }
+
+  console.log(allEmployees);
+  await parser.close();
+}
 
 app.listen(PORT, async () => {
   await connectDB();
