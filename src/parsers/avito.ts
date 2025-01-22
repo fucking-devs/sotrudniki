@@ -12,7 +12,7 @@ export const parseAvitoPage = async (page: Page): Promise<Employee[]> => {
   const employees: Employee[] = [];
 
   const cards = await page.evaluate(() => {
-    return [...document.querySelectorAll('div.iva-item-root-Se7z4')].map((el) => el.innerHTML);
+    return Array.from(document.querySelectorAll('div.iva-item-root-Se7z4')).map((el) => el.innerHTML);
   });
 
   for (let i = 0; i < cards.length; i++) {

@@ -1,4 +1,5 @@
 import axios from "axios"; 
+import axios from "axios"; 
 
 document.addEventListener('DOMContentLoaded', () => {
     const citySelect = document.getElementById('city');
