@@ -1,7 +1,7 @@
 import Submission from './schemaAnketa';
 import { Request } from 'express';
 
-export const createSubmission = (formData: any, req: Request) => {
+export const createAnketa = (formData: any, req: Request) => {
   return new Submission({
     age: formData.age,
     experience: formData.experience,

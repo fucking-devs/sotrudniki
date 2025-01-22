@@ -16,7 +16,7 @@ interface ISubmission extends Document {
   additionalData: object;
 }
 
-const SubmissionSchema: Schema = new Schema({
+const AnketaSchema: Schema = new Schema({
   age: { type: String, required: true },
   experience: { type: String, required: true },
   criminal: { type: String, required: true },
@@ -33,6 +33,6 @@ const SubmissionSchema: Schema = new Schema({
 });
 
 
-const Submission = mongoose.models.Submission || mongoose.model<ISubmission>('Submission', SubmissionSchema);
+const Submission = mongoose.models.Submission || mongoose.model<ISubmission>('Submission', AnketaSchema);
 
 export default Submission;
