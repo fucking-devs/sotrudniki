@@ -23,6 +23,8 @@ async function connectDB() {
 }
 
 app.use(express.static(path.join(__dirname, "../client")));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
   const indexPath = path.join(__dirname, "../client", "index.html");
