@@ -1,47 +1,69 @@
-import axios from 'axios';
+import axios from "axios"; 
 
 document.addEventListener('DOMContentLoaded', () => {
     const citySelect = document.getElementById('city');
     const customCityInput = document.getElementById('custom-city');
     const citizenshipSelect = document.getElementById('citizenship');
     const customCitizenshipInput = document.getElementById('custom-citizenship');
-
-    citySelect.addEventListener('change', function() {
-        if (this.value === 'other') {
-            customCityInput.style.display = 'block';
-            customCityInput.required = true;
-        } else {
-            customCityInput.style.display = 'none';
-            customCityInput.required = false;
-        }
-    });
-
-    citizenshipSelect.addEventListener('change', function() {
-        if (this.value === 'other') {
-            customCitizenshipInput.style.display = 'block';
-            customCitizenshipInput.required = true;
-        } else {
-            customCitizenshipInput.style.display = 'none';
-            customCitizenshipInput.required = false;
-        }
-    });
-
     const form = document.getElementById('application-form');
+    const responseMessage = document.getElementById('response-message');
+
+    citySelect.addEventListener('change', () => toggleCustomInput(customCityInput, citySelect));
+    citizenshipSelect.addEventListener('change', () => toggleCustomInput(customCitizenshipInput, citizenshipSelect));
+    
     form.addEventListener('submit', async (event) => {
-        event.preventDefault();
+        event.preventDefault(); 
 
-        const formData = new FormData(form);
-        const data = Object.fromEntries(formData.entries());
+        const formData = {
+            age: Number(document.getElementById('age').value), 
+            experience: Number(document.getElementById('experience').value),
+            criminal: document.getElementById('criminal').value,
+            position: document.getElementById('position').value,
+            city: citySelect.value === 'other' ? customCityInput.value : citySelect.value,
+            citizenship: citizenshipSelect.value === 'other' ? customCitizenshipInput.value : citizenshipSelect.value,
+            query: document.getElementById('query').value
+        };
 
-        try {
-            const response = await axios.post('http://localhost:5000/submit', data, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            console.log(response.data);
-        } catch (error) {
-            console.error('Ошибка при отправке формы:', error);
-        }
+        console.log("Отправляемые данные:", formData); 
+
+        await submitForm(formData);
     });
 });
+
+function toggleCustomInput(inputElement, selectElement) {
+    if (selectElement.value === 'other') {
+        inputElement.style.display = 'block';
+        inputElement.required = true;
+    } else {
+        inputElement.style.display = 'none';
+        inputElement.required = false;
+    }
+}
+
+async function submitForm(data) {
+    const responseMessage = document.getElementById('response-message'); 
+
+    try {
+        const response = await axios.post('http://localhost:5000/submit', data, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        displayResponseMessage(response.data.message, 'success');
+    } catch (error) {
+        console.error('Ошибка при отправке формы:', error);
+
+        if (error.response && error.response.data && error.response.data.error) {
+            displayResponseMessage(error.response.data.error, 'error');
+        } else {
+            displayResponseMessage('Произошла ошибка при отправке данных.', 'error');
+        }
+    }
+}
+
+function displayResponseMessage(message, type) {
+    const responseMessage = document.getElementById('response-message'); 
+    responseMessage.textContent = message;
+    responseMessage.style.color = type === 'success' ? 'green' : 'red';
+    responseMessage.style.display = 'block';
+}

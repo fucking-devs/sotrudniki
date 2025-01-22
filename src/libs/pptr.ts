@@ -1,26 +1,25 @@
-import puppeteer, { Browser } from 'puppeteer'
+import puppeteer, { Browser } from 'puppeteer';
 
 export class Parser {
-  browser?: Browser
+    browser?: Browser;
 
-  async launch() {
-    this.browser = await puppeteer.launch({
-      headless: false
-    })
-  }
-
-  async newPage() {
-    if (!this.browser) {
-      await this.launch()
+    async launch() {
+        this.browser = await puppeteer.launch({
+            headless: false, 
+        });
     }
 
-    const page = await this.browser!.newPage()
-    await page.setViewport({ width: 1080, height: 1920 })
+    async newPage() {
+        if (!this.browser) {
+            await this.launch();
+        }
 
-    return page
-  }
+        const page = await this.browser!.newPage();
+        await page.setViewport({ width: 1080, height: 1920 });
+        return page;
+    }
 
-  async close() {
-    await this.browser?.close()
-  }
+    async close() {
+        await this.browser?.close();
+    }
 }

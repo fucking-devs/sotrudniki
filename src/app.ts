@@ -1,34 +1,89 @@
-import { Parser } from "./libs/pptr";
-import { parse } from "node-html-parser";
-import { parseAvitoPage } from "./parsers/avito";
+import express, { Request, Response } from 'express';
+import bodyParser from 'body-parser';
+import path from 'path';
+import fs from 'fs';
+import { Parser } from '../src/libs/pptr';
+import { parseAvitoPage } from '../src/parsers/avito';
 
-async function main() {
-  const parser = new Parser();
-  await parser.launch();
-  const page = await parser.newPage();
+const app = express();
+const PORT = process.env.PORT || 5000;
 
-  const allEmployees = [];
-  let currentPage = 1;
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(express.static('client'));
 
-  while (true) {
-    const link = `https://www.avito.ru/volgograd/rezume?cd=1&p=${currentPage}&q=%D0%B7%D0%B0%D0%BB%D0%B8%D0%B2%D0%BA%D0%B0+%D0%B1%D0%B5%D1%82%D0%BE%D0%BD%D0%B0`;
+app.get('/', (req: Request, res: Response) => {
+    const indexPath = path.join(__dirname, '../client', 'index.html');
+    fs.readFile(indexPath, 'utf8', (err, data) => {
+        if (err) {
+            res.status(500).send('Ошибка загрузки index.html');
+            return;
+        }
+        res.send(data);
+    });
+});
 
-    await page.goto(link, { timeout: 50_000 });
+app.post('/submit', async (req: Request, res: Response): Promise<void> => {
+    const formData = req.body;
+    console.log('Полученные данные:', formData);
 
-    const avitoData = await parseAvitoPage(page);
-    allEmployees.push(...avitoData);
-
-    const nextPageElement = await page.$("a.styles-module-item_last-ucP91");
-    if (!nextPageElement) {
-      break;
+    if (!formData.query) {
+        res.status(400).json({ error: 'Параметр query обязателен.' });
+        return;
     }
 
-    currentPage++;
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-  }
+    if (isNaN(formData.age) || isNaN(formData.experience)) {
+        res.status(400).json({ error: 'Возраст и опыт работы должны быть числами.' });
+        return;
+    }
 
-  console.log(allEmployees);
-  await parser.close();
-}
+    const parser = new Parser();
+    const allEmployees: any[] = [];
 
-main();
+    try {
+        await parser.launch();
+        const page = await parser.newPage();
+        let currentPage = 1;
+
+        while (true) {
+            const link = `https://www.avito.ru/volgograd/rezume?cd=1&p=${currentPage}&q=${encodeURIComponent(formData.query)}`;
+            
+            await page.goto(link, { timeout: 50000 });
+            const avitoData = await parseAvitoPage(page);
+            allEmployees.push(...avitoData);
+
+            const nextPageElement = await page.$("a.styles-module-item_last-ucP91");
+            if (!nextPageElement) {
+                break;
+            }
+
+            currentPage++;
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+        }
+
+     
+        const dirPath = path.join(__dirname, '../data');
+        if (!fs.existsSync(dirPath)) {
+            fs.mkdirSync(dirPath);
+        }
+
+        const filePath = path.join(dirPath, 'data.json');
+        const existingData = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath, 'utf8')) : [];
+        
+        existingData.push(...allEmployees);
+        fs.writeFileSync(filePath, JSON.stringify(existingData, null, 2));
+
+        console.log('Данные успешно сохранены:', allEmployees);
+
+        res.json({ message: 'Данные успешно получены и сохранены', data: allEmployees });
+    } catch (error) {
+        console.error('Ошибка при обработке запроса:', error);
+        res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+    } finally {
+        await parser.close();
+    }
+});
+
+app.listen(PORT, () => {
+    console.log(`Сервер запущен на http://localhost:${PORT}`);
+});
