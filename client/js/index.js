@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const customCitizenshipInput = document.getElementById('custom-citizenship');
     const form = document.getElementById('application-form');
     const responseMessage = document.getElementById('response-message');
+    const downloadButton = document.getElementById('download-excel');
 
     citySelect.addEventListener('change', () => toggleCustomInput(customCityInput, citySelect));
     citizenshipSelect.addEventListener('change', () => toggleCustomInput(customCitizenshipInput, citizenshipSelect));
@@ -33,6 +34,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
         await submitForm(formData);
     });
+
+    downloadButton.addEventListener('click', async () => {
+        console.log("Скачивание Excel файла...");
+        try {
+            const response = await axios.get('http://localhost:5000/export', {
+                responseType: 'blob' 
+            });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'data.xlsx'); 
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (error) {
+            console.error('Ошибка при скачивании файла:', error);
+            displayResponseMessage('Ошибка при скачивании Excel файла.', 'error');
+        }
+    });
 });
 
 function toggleCustomInput(inputElement, selectElement) {
@@ -50,6 +71,7 @@ async function submitForm(data) {
     const progressContainer = document.getElementById('progress-container');
     const progressBar = document.getElementById('progress-bar');
     const progressText = document.getElementById('progress-text');
+    const downloadButton = document.getElementById('download-excel');
 
     try {
         progressContainer.style.display = 'block'; 
@@ -59,13 +81,16 @@ async function submitForm(data) {
             }
         });
 
-        response.data.pages.forEach((page, index) => {
-            const progress = ((index + 1) / response.data.totalPages) * 100;
+        const totalPages = response.data.totalPages || 1; 
+        for (let index = 0; index < totalPages; index++) {
+            const progress = ((index + 1) / totalPages) * 100;
             progressBar.style.width = `${progress}%`;
-            progressText.textContent = `Обработано страниц: ${index + 1} из ${response.data.totalPages}`;
-        });
+            progressText.textContent = `Обработано страниц: ${index + 1} из ${totalPages}`;
+            await new Promise(resolve => setTimeout(resolve, 500)); 
+        }
 
         displayResponseMessage(response.data.message, 'success');
+        downloadButton.style.display = 'block'; 
     } catch (error) {
         console.error('Ошибка при отправке формы:', error);
         if (error.response && error.response.data && error.response.data.error) {
@@ -81,8 +106,6 @@ function displayResponseMessage(message, type) {
     responseMessage.textContent = message;
     responseMessage.style.color = type === 'success' ? 'green' : 'red';
     responseMessage.style.display = 'block';
-
-    // Удаление сообщения через несколько секунд
     setTimeout(() => {
         responseMessage.style.display = 'none';
     }, 5000);

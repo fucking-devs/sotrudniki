@@ -6,8 +6,9 @@ import { Parser } from "./libs/pptr";
 import { parseAvitoPage } from "./parsers/avito";
 import * as dotenv from "dotenv";
 import schemaAvito from "./schemas/schemaAvito";
-import { createAnketa } from "./schemas/createSubmisson"; 
+import { createAnketa } from "./schemas/createSubmisson";
 import xlsx from "xlsx";
+import Employee from "./models/Employee";
 
 dotenv.config();
 const app = express();
@@ -20,44 +21,69 @@ interface FormData {
   customCity?: string;
 }
 
-// Беда тута
-const dirPath = path.join(__dirname, '../data');
-if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath);
+app.get("/export", async (req, res) => {
+  try {
+    const employees: InstanceType<typeof schemaAvito>[] =
+      await schemaAvito.find({});
+
+    const formattedData = [
+      ["Title", "Description", "Salary", "Link"],
+      ...employees.map((employee) => [
+        employee.title ?? "Нет данных",
+        employee.desc ?? "Нет данных",
+        employee.salary ?? "Нет данных",
+        employee.href ?? "Нет данных",
+      ]),
+    ];
+
+    console.log("Отформатированные данные:", formattedData);
+
+    const ws = xlsx.utils.aoa_to_sheet(formattedData);
+    const wb = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, "Employees");
+
+    const filePath = path.join(__dirname, "../data/Employees.xlsx");
+    xlsx.writeFile(wb, filePath);
+
+    if (fs.existsSync(filePath)) {
+      console.log("Файл успешно создан:", filePath);
+    } else {
+      console.error("Ошибка: файл не был создан.");
+    }
+
+    res.download(filePath, "Employees.xlsx", (err) => {
+      if (err) {
+        console.error("Ошибка при загрузке файла:", err);
+        res.status(500).send("Ошибка при загрузке файла");
+      }
+    });
+  } catch (error) {
+    console.error("Ошибка при генерации Excel файла:", error);
+    res.status(500).send("Ошибка при генерации Excel файла");
+  }
+});
+
+interface EmployeeType {
+  _id: string;
+  title: string;
+  desc: string;
+  salary: string;
+  href: string;
+  __v?: number;
 }
 
-const jsonFilePath = path.join(dirPath, 'AvitoData.json');
-const excelFilePath = path.join(dirPath, 'AvitoData.xlsx'); 
-
-app.get("/export", async (req: Request, res: Response) => { 
-    try {
-        const employees = await schemaAvito.find({});
-        const ws = xlsx.utils.json_to_sheet(employees);
-        const wb = xlsx.utils.book_new();
-        xlsx.utils.book_append_sheet(wb, ws, "Avito Data");
-        xlsx.writeFile(wb, excelFilePath);
-        
-        const existingData = fs.existsSync(jsonFilePath) ? JSON.parse(fs.readFileSync(jsonFilePath, 'utf8')) : [];
-        existingData.push(...employees);
-        fs.writeFileSync(jsonFilePath, JSON.stringify(existingData, null, 2));
-
-        console.log("Данные успешно сохранены в JSON файл:", jsonFilePath);
-        console.log("Данные успешно сохранены в Excel файл:", excelFilePath);
-
-        res.json({ message: "Файлы успешно созданы", jsonFilePath: "AvitoData.json", excelFilePath: "AvitoData.xlsx" });
-    } catch (error) {
-        console.error("Ошибка при экспорте данных:", error);
-        res.status(500).json({ error: "Ошибка при экспорте данных" });
-    }
-});
+const dirPath = path.join(__dirname, "../data");
+if (!fs.existsSync(dirPath)) {
+  fs.mkdirSync(dirPath);
+}
 // И тута вроде заканчивается
 async function connectDB() {
-    try {
-        await mongoose.connect(mongoUrl, {});
-        console.log("Подключение к MongoDB успешно");
-    } catch (err) {
-        console.error("Ошибка подключения к MongoDB:", err);
-    }
+  try {
+    await mongoose.connect(mongoUrl, {});
+    console.log("Подключение к MongoDB успешно");
+  } catch (err) {
+    console.error("Ошибка подключения к MongoDB:", err);
+  }
 }
 
 app.use(express.static(path.join(__dirname, "../client")));
@@ -65,45 +91,55 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {
-    const indexPath = path.join(__dirname, "../client", "index.html");
-    fs.readFile(indexPath, "utf8", (err: NodeJS.ErrnoException | null, data: string) => {
-        if (err) {
-            res.status(500).send("Ошибка загрузки index.html");
-            return;
-        }
-        res.send(data);
-    });
+  const indexPath = path.join(__dirname, "../client", "index.html");
+  fs.readFile(
+    indexPath,
+    "utf8",
+    (err: NodeJS.ErrnoException | null, data: string) => {
+      if (err) {
+        res.status(500).send("Ошибка загрузки index.html");
+        return;
+      }
+      res.send(data);
+    }
+  );
 });
 
 app.post("/submit", async (req: Request, res: Response): Promise<void> => {
-    const formData: FormData = req.body;
-    console.log("Полученные данные:", formData);
+  const formData: FormData = req.body;
+  console.log("Полученные данные:", formData);
 
-    if (!formData.query) {
-        res.status(400).json({ error: "Параметр query обязателен." });
-        return;
-    }
+  if (!formData.query) {
+    res.status(400).json({ error: "Параметр query обязателен." });
+    return;
+  }
 
-    try {
-        const submission = createAnketa(formData, req);
-        await submission.save();
-        console.log("Данные успешно сохранены:", submission);
-        await fetchAvitoData(formData);
-        res.json({ message: "Данные успешно сохранены и парсинг выполнен", data: submission });
-    } catch (error) {
-        console.error("Ошибка при обработке запроса:", error);
-        res.status(500).json({ error: "Внутренняя ошибка сервера" });
-    }
+  try {
+    const submission = createAnketa(formData, req);
+    await submission.save();
+    console.log("Данные успешно сохранены:", submission);
+    await fetchAvitoData(formData);
+    res.json({
+      message: "Данные успешно сохранены и парсинг выполнен",
+      data: submission,
+    });
+  } catch (error) {
+    console.error("Ошибка при обработке запроса:", error);
+    res.status(500).json({ error: "Внутренняя ошибка сервера" });
+  }
 });
 
 async function fetchAvitoData(formData: FormData) {
-    const parser = new Parser();
-    await parser.launch();
-    const page = await parser.newPage();
-    const allEmployees = [];
-    let currentPage = 1;
-    const query = encodeURIComponent(formData.query);
-    const city = formData.city === 'other' ? encodeURIComponent(formData.customCity || '') : formData.city;
+  const parser = new Parser();
+  await parser.launch();
+  const page = await parser.newPage();
+  const allEmployees = [];
+  let currentPage = 1;
+  const query = encodeURIComponent(formData.query);
+  const city =
+    formData.city === "other"
+      ? encodeURIComponent(formData.customCity || "")
+      : formData.city;
   console.log("Город:", city);
   console.log("Запрос:", query);
 
