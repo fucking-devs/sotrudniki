@@ -5,7 +5,9 @@ body {
     margin: 0;
     padding: 0;
 }
-
+.download-excel {
+    display:block; margin-top: 20px; padding: 10px; background-color: #4CAF50; color: white; text-align: center; text-decoration: none; border-radius: 5px
+}
 header {
     background: linear-gradient(90deg, #28a745, #218838);
     color: #fff;
