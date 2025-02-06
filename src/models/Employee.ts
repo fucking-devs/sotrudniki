@@ -1,6 +1,6 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import { model, Schema } from 'mongoose';
 
-export interface Employee extends Document {
+export interface Employee {
     title: string;
     desc: string;
     salary: string;
@@ -14,4 +14,4 @@ const employeeSchema = new Schema({
     href: { type: String, required: true }
 });
 
-export default mongoose.model<Employee>('Employee', employeeSchema);
+export default model<Employee>('Employee', employeeSchema);
