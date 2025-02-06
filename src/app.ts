@@ -12,10 +12,11 @@ config();
 
 const app = express();
 
-const PORT = process.env.PORT;
-const mongoUrl = process.env.MONGO_URL || "mongodb://localhost:27017/anketa";
+const { PORT, MONGO_URL } = process.env;
 
-mongoose.connect(mongoUrl);
+if (!PORT || !MONGO_URL) throw new Error('PORT or MONGO_URL is not defined')
+
+mongoose.connect(MONGO_URL);
 
 app.use(express.static(path.join(__dirname, "../client")));
 app.use(express.urlencoded({ extended: true }));

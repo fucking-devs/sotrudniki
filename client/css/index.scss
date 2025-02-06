@@ -4,6 +4,21 @@ body {
     color: #333;
     margin: 0;
     padding: 0;
+
+    .form-container {
+        .download {
+            a {
+                display: block;
+                margin-top: 20px;
+                padding: 10px;
+                background-color: #4caf50;
+                color: white;
+                text-align: center;
+                text-decoration: none;
+                border-radius: 5px;
+            }
+        }
+    }
 }
 
 header {
