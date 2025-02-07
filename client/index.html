@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Поиск сотрудников</title>
+  <link href="css/index.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/index.scss" />
+  <script type="module" src="js/index.js" defer></script>
+</head>
+
+<body>
+  <section class="form-container">
+    <form class="application-form" action="/submit" method="POST">
+      <div class="form-group">
+        <label for="age">Возраст:</label>
+        <input type="number" class="age" name="age" min="0" />
+      </div>
+
+      <div class="form-group">
+        <label for="experience">Опыт работы (лет):</label>
+        <input type="number" class="experience" name="experience" min="0" />
+      </div>
+
+      <div class="form-group">
+        <label for="criminal">Судимость?</label>
+        <select class="criminal" name="criminal">
+          <option value="">Выберите...</option>
+          <option value="yes">Отсутствует</option>
+          <option value="no">Неважно</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="position">Должность:</label>
+        <input type="text" class="position" name="position" />
+      </div>
+
+      <div class="form-group">
+        <label for="city">Город:</label>
+        <select class="city" name="city" onchange="toggleCustomCityInput()" required>
+          <option value="">Выберите город...</option>
+          <option value="volgograd">Волгоград</option>
+          <option value="moscow">Москва</option>
+          <option value="samara">Самара</option>
+          <option value="kazan">Казань</option>
+          <option value="ekaterinburg">Екатеринбург</option>
+          <option value="other">Другой</option>
+        </select>
+        <input type="text" class="custom-city" name="custom-city" placeholder="Введите ваш город" style="display: none" required />
+      </div>
+
+      <div class="form-group">
+        <label for="citizenship">Гражданство:</label>
+        <select class="citizenship" name="citizenship" onchange="toggleCustomCitizenshipInput()">
+          <option value="">Выберите гражданство...</option>
+          <option value="russia">Россия</option>
+          <option value="belarus">Беларусь</option>
+          <option value="kazakhstan">Казахстан</option>
+          <option value="other">Другое</option>
+        </select>
+        <input type="text" class="custom-citizenship" name="custom-citizenship" placeholder="Введите ваше гражданство" style="display: none" />
+      </div>
+
+      <div class="form-group">
+        <label for="query">Промт:</label>
+        <textarea class="query" name="query" rows="4" placeholder="Введите ваш запрос" required></textarea>
+      </div>
+
+      <button type="submit">Отправить анкету</button>
+      <div class="response-message" style="display: none"></div>
+    </form>
+
+    <div class="progress-container" style="display: none">
+      <div class="progress-bar" style="width: 0%; height: 20px; background-color: green"></div>
+      <p class="progress-text"></p>
+    </div>
+
+    <div class="download">
+      <a href="http://localhost:5000/export" class="download-excel">Скачать в Excel</a>
+    </div>
+  </section>
+</body>
+
+</html>
