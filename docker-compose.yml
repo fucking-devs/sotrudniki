@@ -1,0 +1,26 @@
+services:
+  api:
+    build:
+     context: .
+     dockerfile: ./Dockerfile
+    container_name: sotrudniki_api
+    restart: always
+    ports:
+      - 5000:5000
+    depends_on:
+     - db
+    networks:
+      - general
+  db:
+    image: mongo
+    ports:
+      - 27017:27017
+    container_name: sotrudniki_db
+    volumes:
+      - ./data:/data/db
+    networks:
+      - general
+
+
+networks:
+  general:

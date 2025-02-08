@@ -2,8 +2,8 @@ import { model, Schema } from 'mongoose';
 
 export interface Employee {
     title: string;
-    desc: string;
-    salary: string;
+    desc?: string;
+    salary?: string;
     href: string;
 }
 
