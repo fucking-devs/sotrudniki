@@ -11,20 +11,31 @@ const form = document.querySelector('form')
 form?.addEventListener('submit', async (event) => {
   event.preventDefault()
 
-  const data = {
-    position: position.value,
-    city: city.value,
-    criminal: criminal.value === 'not_matter' ? true : false,
-    prompt: prompt.value
-  }
-
-  console.log(data)
-
-  const req = await axios.post('/submit', data)
-
-  console.log(req.data)
-})
-
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault()
+    
+    try {
+      const data = {
+        position: position.value,
+        city: city.value,
+        criminal: criminal.value === 'not_matter',
+        prompt: prompt.value
+      }
+  
+      const response = await axios.post('/submit', data)
+      
+      if (response.data.error) {
+        alert('Ошибка: ' + response.data.error)
+      } else {
+        alert('Данные успешно собраны!')
+        console.log(response.data)
+      }
+    } catch (error) {
+      console.error('Request failed:', error)
+      alert('Произошла ошибка при выполнении запроса')
+    }
+  })
+  
 downloadButton.addEventListener('click', () => {
   window.location.href = '/export'
-})
+})})
