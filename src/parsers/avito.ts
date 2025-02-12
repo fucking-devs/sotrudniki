@@ -11,7 +11,7 @@ export const parseAvitoPage = async (page: Page, position: string, city: string)
 
   while (true) {
     const link = `https://www.avito.ru/${city}/rezume?cd=1&p=${currentPage}&q=${query}`
-    await page.goto(link, { timeout: 50_000 })
+    await page.goto(link, { waitUntil: 'domcontentloaded', timeout: 50_000 })
 
     const cards = await page.evaluate(() => {
       return Array.from(document.querySelectorAll('div.iva-item-root-Se7z4')).map((el) => el.innerHTML)
@@ -25,7 +25,7 @@ export const parseAvitoPage = async (page: Page, position: string, city: string)
         .querySelectorAll('.iva-item-descriptionStep-i2icy p')
         .map((el) => el.innerText)
         .join(' ')
-      const salary = card.querySelector('.styles-module-root-LEIrw')?.innerText
+      const salary = card.querySelector('.styles-module-root-LEIrw')?.innerText ?? 'не указана'
       const href = card.querySelector('a')?.getAttribute('href')
 
       if (!href) return
@@ -43,8 +43,9 @@ export const parseAvitoPage = async (page: Page, position: string, city: string)
     if (!nextPageElement) break
 
     currentPage++
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    await new Promise((resolve) => setTimeout(resolve, 2000)) 
   }
 
   return employees
 }
+
