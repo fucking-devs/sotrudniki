@@ -22,6 +22,12 @@ app.use(express.static(path.join(__dirname, '../client')))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
+app.use((req, res, next) => {
+  console.log(`info: ${req.originalUrl} - ${new Date()}`)
+
+  return next()
+})
+
 app.get('/export', async (req, res) => {
   const employees = await Employee.find()
 
@@ -50,7 +56,7 @@ app.post('/submit', async (req, res) => {
 
   const page = await parser.newPage()
 
-  const employees = parseAvitoPage(page, position, city)
+  const employees = await parseAvitoPage(page, position, city)
 
   console.log(employees)
 
