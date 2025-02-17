@@ -1,4 +1,4 @@
-axios.defaults.baseURL = 'http://localhost:5000';
+axios.defaults.baseURL = 'http://127.0.0.1:5000';
 
 const position = document.querySelector('#position')
 const city = document.querySelector('#city')
@@ -11,31 +11,20 @@ const form = document.querySelector('form')
 form?.addEventListener('submit', async (event) => {
   event.preventDefault()
 
-  form?.addEventListener('submit', async (event) => {
-    event.preventDefault()
-    
-    try {
-      const data = {
-        position: position.value,
-        city: city.value,
-        criminal: criminal.value === 'not_matter',
-        prompt: prompt.value
-      }
-  
-      const response = await axios.post('/submit', data)
-      
-      if (response.data.error) {
-        alert('Ошибка: ' + response.data.error)
-      } else {
-        alert('Данные успешно собраны!')
-        console.log(response.data)
-      }
-    } catch (error) {
-      console.error('Request failed:', error)
-      alert('Произошла ошибка при выполнении запроса')
-    }
-  })
-  
+  const data = {
+    position: position.value,
+    city: city.value,
+    criminal: criminal.value === 'not_matter' ? true : false,
+    prompt: prompt.value
+  }
+
+  console.log(data)
+
+  const req = await axios.post('/submit', data)
+
+  console.log(req.data)
+})
+
 downloadButton.addEventListener('click', () => {
   window.location.href = '/export'
-})})
+})

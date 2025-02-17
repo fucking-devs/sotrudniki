@@ -6,7 +6,7 @@ export class OpenAIModel {
 
     constructor() {
         this.openai = new OpenAI({
-            baseURL: 'https://api.proxyapi.ru/openai/v1',
+            baseURL: 'https://bothub.chat/api/v2/openai/v1',
             apiKey: process.env.OPENAI_API_KEY
         });
     }
@@ -22,7 +22,6 @@ export class OpenAIModel {
         const response = await this.openai.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: [{ role: "user", content: prompt }],
-            max_tokens: 10
         });
 
         return response.choices[0]?.message?.content?.toLowerCase().startsWith('да') ?? false;
