@@ -12,19 +12,27 @@ export class OpenAIModel {
     }
 
     async isEmployeeSuitable(employee: Employee, position: string): Promise<boolean> {
-        const prompt = `Определи, подходит ли кандидат на позицию "${position}". Ответь только "да" или "нет".
+        const hasDescription = !!employee.desc; 
+        const prompt = hasDescription 
+            ? `Определи, подходит ли кандидат на позицию "${position}". Ответь только "да" или "нет".
             
             Данные кандидата:
             - Должность: ${employee.title}
-            ${employee.desc ? `- Описание: ${employee.desc}` : ''}
+            - Описание: ${employee.desc}
+            ${employee.salary ? `- Зарплата: ${employee.salary}` : ''}`
+            : `Определи, подходит ли кандидат на позицию "${position}". Ответь только "да" или "нет".
+            
+            Данные кандидата:
+            - Должность: ${employee.title}
+            - Описание: отсутствует
             ${employee.salary ? `- Зарплата: ${employee.salary}` : ''}`;
-
+    
         const response = await this.openai.chat.completions.create({
             model: 'gpt-4o-mini',
             messages: [{ role: "user", content: prompt }],
             max_tokens: 10
         });
-
+    
         return response.choices[0]?.message?.content?.toLowerCase().startsWith('да') ?? false;
     }
 }
